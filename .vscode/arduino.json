@@ -1,0 +1,5 @@
+{
+    "board": "arduino:avr:uno",
+    "port": "COM3",
+    "sketch": "sketch_aug10alaunchControl.ino"
+}
