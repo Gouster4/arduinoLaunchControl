@@ -3,8 +3,10 @@ int switchPin = A0;  // left button that controls the pulsing relay funtion , pi
 int statusPin = 2;  // a red led that lights when the relay is disconnecting the circuit
 int holdPin = A2;  // right button that controls the disconnect relay function
 int potPin = A1;  // potentiometer pin that will read the values from the potentiometer itself
+int potPinTwo = A3;  // potentiometer pin that will read the values from the potentiometer itself
 int uniDelay = 100;  // a universal delay... probably will never get used
 int potReading;  // global potentiometer reading variable that stores the potentiometer value output after it's been changed by math
+int potReadingTwo;  // global potentiometer reading variable that stores the potentiometer value output after it's been changed by math
 int switchPinReading; // switch pin reading value
 int holdPinReading; // hold pin reading value
 
@@ -13,6 +15,7 @@ Serial.begin(9600); //begin the serial port for diagnostics
 pinMode(relayPin, OUTPUT); //tell the relaypin to output a value
 pinMode(switchPin, INPUT);  //tell the switchpin to expect an input value
 pinMode(potPin, INPUT);  // tell the potpin to expect an input value
+pinMode(potPinTwo, INPUT);  // tell the potpin to expect an input value
 pinMode(holdPin, INPUT);  // tell the holdpin to expect an input value
 pinMode(statusPin, OUTPUT); // tell the statuspin to output a value
 };
@@ -22,14 +25,18 @@ void loop() { // constantly running loop after void setup
   
   if (holdPinReading >= 300){ // if the holdpinreading is pressed.... 
     hold(); // ....call the code in this loop
-  }else{
-  digitalWrite(relayPin, HIGH);
+    }else{
+    digitalWrite(relayPin, HIGH);
   };
+  
   switchPinReading = analogRead(switchPin);
   holdPinReading = analogRead(holdPin);
 
   potReading = analogRead(potPin);
-  potReading = potReading / 3 + 180;
+  potReading = potReading / 3 + 50;
+
+  potReadingTwo = analogRead(potPinTwo);
+  potReadingTwo = potReadingTwo / 3 + 50;
   
   if (switchPinReading >= 200){
     active();
@@ -37,26 +44,30 @@ void loop() { // constantly running loop after void setup
     Serial.println(switchPinReading);
     Serial.println(holdPinReading);
   };
+  
 };
 
 void active(){
-  // Serial.println(switchPinReading);
-  // Serial.println(holdPinReading);
+// Serial.println(switchPinReading);
+// Serial.println(holdPinReading);
   digitalWrite(statusPin, HIGH);  // red led will illuminate
   digitalWrite(relayPin, LOW); // open the ignition circuit!
-  delay(600);
-  Serial.println(switchPinReading);
-  if (switchPinReading <= 200){
-    // Serial.println("ererer");
-    // Serial.println(switchPinReading);
-    // delay(uniDelay);
-    loop();
-  };
-  delay(600);
+  
+//  Serial.println("");
+//  Serial.println(switchPinReading);
+//  Serial.println("");
+  
+  delay(potReadingTwo);
+  
   digitalWrite(relayPin, HIGH); // close the ignition circuit, followed by a boom!
   digitalWrite(statusPin, LOW);
+  
   delay(potReading); // delay for the engine to rev back up to a proper rpm. adjusted/variated by the potentiometer.
-  //Serial.println(potReading);
+  
+//  Serial.println("");
+//  Serial.println(potReading);
+//  Serial.println(potReadingTwo);
+//  Serial.println("");
  };
 
  void hold(){
